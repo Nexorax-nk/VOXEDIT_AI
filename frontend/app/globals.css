@@ -1,0 +1,45 @@
+/* app/globals.css */
+@import "tailwindcss";
+
+@theme {
+  /* Electric Red Theme */
+  --color-electric-red: #FF2E4D; 
+  --color-electric-red-hover: #D91C38;
+  
+  /* Grayscale / UI Colors */
+  --color-bg-black: #0F0F0F;      /* Main Deep Background */
+  --color-bg-dark: #18181B;       /* Panel Backgrounds */
+  --color-bg-lighter: #27272A;    /* Hover/Item Backgrounds */
+  --color-border-gray: #3F3F46;   /* Subtle Borders */
+  
+  /* Text */
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A1A1AA;
+}
+
+/* Global Reset & Base Styles */
+html,
+body {
+  height: 100%;
+  width: 100%;
+  background-color: var(--color-bg-black);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow: hidden; /* Prevent scrolling on the main window */
+}
+
+/* Custom Scrollbar for panels */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-bg-lighter);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-electric-red);
+}
