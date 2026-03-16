@@ -8,3 +8,5 @@ python-dotenv
 ffmpeg-python
 SpeechRecognition 
 pydub
+google-genai
+numpy
