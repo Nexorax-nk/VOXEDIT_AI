@@ -53,7 +53,8 @@ const MediaPanel = ({
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const response = await fetch("http://localhost:8000/upload", { method: "POST", body: formData });
+      // UPDATED: Connected to live Cloud Run backend
+      const response = await fetch("https://voxedit-backend-577095710958.us-central1.run.app/upload", { method: "POST", body: formData });
       if (!response.ok) throw new Error("Upload failed");
       const data = await response.json();
       
@@ -220,7 +221,8 @@ const CopilotPanel = ({
                 formData.append("clip_start", clipOffset.toString());
                 formData.append("clip_duration", selectedClip.duration.toString());
 
-                const res = await fetch("http://localhost:8000/voice-command", {
+                // UPDATED: Connected to live Cloud Run backend
+                const res = await fetch("https://voxedit-backend-577095710958.us-central1.run.app/voice-command", {
                     method: "POST",
                     body: formData
                 });
@@ -303,7 +305,8 @@ const CopilotPanel = ({
         formData.append("clip_start", clipOffset.toString());
         formData.append("clip_duration", selectedClip.duration.toString());
 
-        const res = await fetch("http://localhost:8000/edit", { method: "POST", body: formData });
+        // UPDATED: Connected to live Cloud Run backend
+        const res = await fetch("https://voxedit-backend-577095710958.us-central1.run.app/edit", { method: "POST", body: formData });
         const data = await res.json();
 
         if (data.status === "error") {
@@ -480,7 +483,8 @@ const MagicAssetsPanel = () => {
     try {
       const formData = new FormData();
       formData.append("text", prompt);
-      const res = await fetch("http://localhost:8000/generate-sfx", { method: "POST", body: formData });
+      // UPDATED: Connected to live Cloud Run backend
+      const res = await fetch("https://voxedit-backend-577095710958.us-central1.run.app/generate-sfx", { method: "POST", body: formData });
       const data = await res.json();
       if (data.status === "success") {
         const newFile: MediaFile = { name: data.name, type: "audio", url: data.url, duration: data.duration };
@@ -572,7 +576,8 @@ const SubtitlesPanel = ({ selectedClip }: { selectedClip?: Clip | null }) => {
     try {
         const formData = new FormData();
         formData.append("filename", selectedClip.url.split("/").pop() || "");
-        const res = await fetch("http://localhost:8000/generate-subtitles", { method: "POST", body: formData });
+        // UPDATED: Connected to live Cloud Run backend
+        const res = await fetch("https://voxedit-backend-577095710958.us-central1.run.app/generate-subtitles", { method: "POST", body: formData });
         const data = await res.json();
         if (data.status === "success") setSubtitles(data.subtitles);
         else alert("Failed.");

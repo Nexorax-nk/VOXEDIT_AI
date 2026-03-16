@@ -51,11 +51,13 @@ export default function ReasoningPanel({ isProcessing }: ReasoningPanelProps) {
 
   // --- WEBSOCKET CONNECTION ---
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8000/ws");
+    // UPDATED: Connected to live Cloud Run backend via secure WebSocket
+    const ws = new WebSocket("wss://voxedit-backend-577095710958.us-central1.run.app/ws");
     wsRef.current = ws;
 
     ws.onopen = () => {
       setIsConnected(true);
+      // I left your visual UI log string exactly as you had it for the cool aesthetic!
       addLog("success", "UPLINK_ESTABLISHED: ws://secure-gate/8000");
       addLog("info", "Authenticating Gemini 3.0 Pro...");
     };
@@ -132,7 +134,7 @@ export default function ReasoningPanel({ isProcessing }: ReasoningPanelProps) {
                 <Cpu className="w-8 h-8" />
             </div>
             <span className="text-neutral-500 uppercase tracking-wider flex items-center gap-1.5 text-[9px]">
-               Context Load
+                Context Load
             </span>
             <div className="flex items-end gap-1.5">
                 <span className="text-xl font-bold text-neutral-200 leading-none">{aiStats.tokens.toLocaleString()}</span>
@@ -150,7 +152,7 @@ export default function ReasoningPanel({ isProcessing }: ReasoningPanelProps) {
                 <Activity className="w-8 h-8" />
             </div>
             <span className="text-neutral-500 uppercase tracking-wider flex items-center gap-1.5 text-[9px]">
-               Response Time
+                Response Time
             </span>
             <div className="flex items-end gap-1.5">
                 <span className={cn("text-xl font-bold leading-none", aiStats.latency < 500 ? "text-emerald-500" : "text-yellow-500")}>

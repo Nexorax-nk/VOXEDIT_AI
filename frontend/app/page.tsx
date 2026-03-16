@@ -241,7 +241,9 @@ export default function EditorPage() {
       try {
           const formData = new FormData();
           formData.append("project_data", JSON.stringify(clipData));
-          const res = await fetch("http://localhost:8000/render", { method: "POST", body: formData });
+          
+          const res = await fetch("https://voxedit-backend-577095710958.us-central1.run.app/render", { method: "POST", body: formData });
+          
           if (res.status === 404) { alert("Backend offline."); setIsExporting(false); return; }
           const data = await res.json();
           if (data.status === "success") {
@@ -314,7 +316,8 @@ export default function EditorPage() {
                             <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
                             <span className="text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest">VoxAgent</span>
                          </div>
-                         <span className="text-[9px] text-gray-600 font-mono">GEMINI-1.5-PRO</span>
+                         {/* UPDATED: Reflected the correct Gemini 3.0 model string */}
+                         <span className="text-[9px] text-gray-600 font-mono">GEMINI-3.0-PRO</span>
                     </div>
 
                     {/* Log Stream - STARTED EMPTY */}
@@ -331,16 +334,16 @@ export default function EditorPage() {
             {/* BOTTOM: TIMELINE (Fixed Height) */}
             <div className="h-80 shrink-0 border-t border-white/10 bg-[#757777] z-30 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] relative">
                <Timeline 
-                  tracks={tracks} 
-                  currentTime={currentTime} 
-                  onSeek={setCurrentTime} 
-                  onDropNewClip={handleDropNewClip} 
-                  onUpdateClip={handleUpdateClip}
-                  onSwitchTrack={handleSwitchTrack}
-                  onSplitClip={handleSplitClip}
-                  onDeleteClip={handleDeleteClip}
-                  selectedClipId={selectedClipId ?? undefined}
-                  onSelectClip={setSelectedClipId}
+                 tracks={tracks} 
+                 currentTime={currentTime} 
+                 onSeek={setCurrentTime} 
+                 onDropNewClip={handleDropNewClip} 
+                 onUpdateClip={handleUpdateClip}
+                 onSwitchTrack={handleSwitchTrack}
+                 onSplitClip={handleSplitClip}
+                 onDeleteClip={handleDeleteClip}
+                 selectedClipId={selectedClipId ?? undefined}
+                 onSelectClip={setSelectedClipId}
                />
             </div>
 
