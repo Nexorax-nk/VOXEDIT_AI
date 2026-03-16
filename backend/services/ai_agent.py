@@ -1,11 +1,12 @@
-# backend/services/ai_agent.py
-
 import os
 import json
 import asyncio
 import time
 from dotenv import load_dotenv
-import google.generativeai as genai
+
+# 1. IMPORT THE NEW SDK
+from google import genai
+from google.genai import types
 from google.api_core.exceptions import ResourceExhausted, ServiceUnavailable
 
 # Load env variables
@@ -17,12 +18,12 @@ TEMP_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "temp_storag
 if not API_KEY:
     raise RuntimeError("❌ GEMINI_API_KEY not found in .env")
 
-# Initialize Gemini client
-genai.configure(api_key=API_KEY)
+# 2. INITIALIZE THE NEW CLIENT
+client = genai.Client(api_key=API_KEY)
 
 # --- CONFIGURATION ---
 PRIMARY_MODEL = "gemini-3-pro-preview"  # Fast, multimodal, latest
-FALLBACK_MODEL = "gemini-1.5-pro"       # Stable, high reasoning
+FALLBACK_MODEL = "gemini-1.5-pro"     # Quick fallback
 
 # --- THE "ANTI-HALLUCINATION" SYSTEM PROMPT ---
 SYSTEM_PROMPT = """
@@ -57,63 +58,45 @@ Return ONLY this JSON object. No markdown.
   ],
   "global_effects": {
     "speed": 1.0, 
-    "filter": "none" // options: "none", "grayscale", "sepia", "warm", "cool", "vintage"
+    "filter": "none"
   }
 }
 """
 
-# =========================
-# HELPER: VALIDATE SEGMENTS
-# =========================
 def sanitize_plan(plan):
-    """
-    Cleans up the AI's output to prevent FFmpeg crashes.
-    """
     valid_segments = []
     if "segments_to_keep" in plan:
         for seg in plan["segments_to_keep"]:
-            # Rule 1: Start must be < End
             if seg.get("end", 0) <= seg.get("start", 0):
-                continue # Skip invalid segments
-            
-            # Rule 2: Start must be positive
+                continue
             if seg.get("start", 0) < 0:
                 seg["start"] = 0.0
-            
             valid_segments.append(seg)
-    
     plan["segments_to_keep"] = valid_segments
     return plan
 
-# =========================
-# HELPER: UPLOAD VIDEO
-# =========================
 def upload_video_to_gemini(filename):
     file_path = os.path.join(TEMP_DIR, filename)
-    
     if not os.path.exists(file_path):
         print(f"❌ [AI AGENT] File not found locally: {file_path}")
         return None
 
     print(f"--- 📤 [AI AGENT] Uploading {filename} to Gemini... ---")
-    
-    # 1. Upload
     try:
-        video_file = genai.upload_file(path=file_path)
+        # 3. NEW UPLOAD METHOD
+        video_file = client.files.upload(file=file_path)
     except Exception as e:
         print(f"❌ [AI AGENT] Upload failed: {e}")
         return None
     
-    # 2. Poll state
     print(f"--- ⏳ [AI AGENT] Processing Video (URI: {video_file.uri})... ---")
-    
-    # Timeout safety (max 60 seconds wait)
     start_time = time.time()
     while video_file.state.name == "PROCESSING":
         if time.time() - start_time > 60:
             raise TimeoutError("Gemini video processing timed out.")
         time.sleep(2)
-        video_file = genai.get_file(video_file.name)
+        # 4. NEW GET FILE METHOD
+        video_file = client.files.get(name=video_file.name)
         
     if video_file.state.name == "FAILED":
         raise ValueError(f"Gemini failed to process video: {video_file.state.name}")
@@ -121,11 +104,7 @@ def upload_video_to_gemini(filename):
     print(f"--- ✅ [AI AGENT] Video Ready. ---")
     return video_file
 
-# =========================
-# CORE AI FUNCTION
-# =========================
 async def analyze_command(user_text: str, video_filename: str = None):
-    # 1. Prepare Video
     video_file = None
     if video_filename:
         try:
@@ -135,68 +114,38 @@ async def analyze_command(user_text: str, video_filename: str = None):
         except Exception as e:
              return {"explanation": f"Error during upload: {str(e)}", "segments_to_keep": []}
 
-    # 2. Construct Request
     prompt_parts = [SYSTEM_PROMPT, f"\nUSER COMMAND: {user_text}"]
     if video_file:
         prompt_parts.append(video_file)
 
-    # 3. Call Model (With Fallback Logic)
     for model_name in [PRIMARY_MODEL, FALLBACK_MODEL]:
         try:
             print(f"--- 🧠 [AI AGENT] Reasoning with {model_name}... ---")
             
-            model = genai.GenerativeModel(
-                model_name=model_name,
-                generation_config={"response_mime_type": "application/json", "temperature": 0.2} 
-                # Low temp = more deterministic/accurate
+            # 5. NEW GENERATE CONTENT METHOD
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt_parts,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    temperature=0.2
+                )
             )
             
-            response = model.generate_content(prompt_parts)
-            
-            # 4. Parsing & Cleanup
             try:
                 plan = json.loads(response.text)
-                clean_plan = sanitize_plan(plan) # Validate timestamps
-                return clean_plan
-            
+                return sanitize_plan(plan)
             except json.JSONDecodeError:
-                # Handle accidental markdown wrapping
                 text = response.text.replace("```json", "").replace("```", "").strip()
                 plan = json.loads(text)
                 return sanitize_plan(plan)
 
         except (ResourceExhausted, ServiceUnavailable):
             print(f"⚠️ [AI AGENT] {model_name} overloaded. Switching to fallback...")
-            continue # Try next model
+            continue
             
         except Exception as e:
             print(f"❌ [AI AGENT] Unexpected error: {str(e)}")
             return {"explanation": f"AI Error: {str(e)}", "segments_to_keep": []}
 
     return {"explanation": "AI Service unavailable after retries.", "segments_to_keep": []}
-
-# =========================
-# LOCAL TEST RUNNER
-# =========================
-if __name__ == "__main__":
-    async def test():
-        # Ensure 'checklist.mp4' is in 'backend/temp_storage/' 
-        test_video = "checklist.mp4" 
-        
-        print("\n\n=== 🧪 TESTING VOXEDIT PRO AGENT ===")
-        
-        # Test 1: Vague cleanup
-        cmd1 = "Clean up the audio and remove silence."
-        print(f"👉 Command: {cmd1}")
-        res1 = await analyze_command(cmd1, video_filename=test_video)
-        print(f"🤖 AI: {res1.get('explanation')}")
-        print(f"✂️ Segments: {len(res1.get('segments_to_keep', []))}\n")
-        
-        # Test 2: Specific visual query (Edge Case)
-        cmd2 = "Keep only the part where the red pen is visible."
-        print(f"👉 Command: {cmd2}")
-        res2 = await analyze_command(cmd2, video_filename=test_video)
-        print(f"🤖 AI: {res2.get('explanation')}")
-        print(f"✂️ Segments: {json.dumps(res2.get('segments_to_keep', []), indent=2)}")
-
-    asyncio.run(test())
