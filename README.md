@@ -38,15 +38,13 @@ Watch the **"Black marker and blue pen"** to see compound multimodal reasoning i
 
 <br />
 
-## ✨ Core Features
+## ✨ Features
 
 <div align="center">
   <img src="all feature vox.png" alt="VoxEdit AI Features" width="100%" />
 </div>
 
 <br />
-
-## ✨ Core Features
 
 ### 💬 Interactive AI Copilot
 > **Collaborate, don't just command.** Chat directly with Gemini 3.0 Pro about your raw footage. Have a two-way conversation to get editing advice, let the AI suggest intelligent cuts, or give complex commands (like *"remove all blueprint close-ups"*) to instantly generate a frame-accurate edit plan.
