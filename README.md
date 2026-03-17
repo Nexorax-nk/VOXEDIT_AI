@@ -1,6 +1,14 @@
 # VOXEDIT-AI 🎬
 
-**Autonomous Multimodal AI Video Editing Agent Powered by Gemini 3**
+> **Autonomous Multimodal AI Video Editing Agent Powered by Gemini 3**
+
+![Status](https://img.shields.io/badge/Status-Hackathon_Ready-brightgreen?style=flat-square)
+![Gemini 3.0 Pro](https://img.shields.io/badge/AI-Gemini%203.0%20Pro-4285F4?style=flat-square&logo=google)
+![Google Cloud Run](https://img.shields.io/badge/Deployed-Cloud%20Run-4285F4?style=flat-square&logo=googlecloud)
+![Docker](https://img.shields.io/badge/Container-Docker-2496ED?style=flat-square&logo=docker)
+![Next.js](https://img.shields.io/badge/Frontend-Next.js-black?style=flat-square&logo=next.js)
+![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?style=flat-square&logo=fastapi)
+![FFmpeg](https://img.shields.io/badge/Engine-FFmpeg-5C1A6E?style=flat-square)
 
 ---
 
@@ -17,7 +25,43 @@ Unlike traditional AI tools that rely only on transcripts, VoxEdit uses Gemini 3
 
 [![Covenant IQ Demo](https://img.youtube.com/vi/aAumkcwuHwc/0.jpg)](https://youtu.be/USMVJBiAc40)
 
-Watch the **"Blue Mug Test"** to see compound multimodal reasoning in action.
+Watch the **"Black marker and blue pen"** to see compound multimodal reasoning in action.
+
+---
+<br />
+
+<div align="center">
+  <img src="vox2.png" alt="VoxEdit AI Main Interface" width="100%" />
+  <br />
+  <i>The VOXEDIT-AI Workspace: Featuring the Magnetic Timeline, Copilot Chat, and Live Gemini 3.0 Telemetry Stream.</i>
+</div>
+
+<br />
+
+## ✨ Core Features
+
+<div align="center">
+  <img src="all feature vox.png" alt="VoxEdit AI Features" width="100%" />
+</div>
+
+<br />
+
+## ✨ Core Features
+
+### 💬 Interactive AI Copilot
+> **Collaborate, don't just command.** Chat directly with Gemini 3.0 Pro about your raw footage. Have a two-way conversation to get editing advice, let the AI suggest intelligent cuts, or give complex commands (like *"remove all blueprint close-ups"*) to instantly generate a frame-accurate edit plan.
+
+### 🎙️ Two-Way Voice Editing
+> **Edit entirely hands-free.** Speak naturally about your creative vision, and the AI will actually talk back to you! It verbally confirms actions and suggests alternative trims (via ElevenLabs), then instantly executes your cuts on the timeline.
+
+### 🪄 Magic Sound Lab
+> **Never hunt for stock audio again.** Just type what you need (like *"cinematic bass drop"*), and the system instantly generates high-fidelity sound effects that you can drag right onto your project layers.
+
+### 📝 Instant Smart Subtitles
+> **Perfectly synced text in seconds.** Powered by Faster-Whisper, our engine automatically transcribes your video's audio, dropping visually editable text layers right onto your magnetic timeline.
+
+### 👁️ Live AI Telemetry
+> **No more "black box" AI.** Watch the agent think in real-time. Our custom WebSocket terminal streams Gemini's exact decision-making process—from analyzing frames to rendering via FFmpeg—directly to your screen.
 
 ---
 
@@ -264,47 +308,47 @@ VOXEDIT-AI/
 │   ├── 📂 ffmpeg/                  #  Local FFmpeg binaries (if static linked)
 │   ├── 📂 services/                #  Business Logic & AI Modules
 │   │   ├── 📂 __pycache__/         #  Service-level bytecode
-│   │   ├── 📜 ai_agent.py          #  Core Gemini 3.0 Pro reasoning engine
-│   │   ├── 📜 sfx_gen.py           #  Sound Effect generation logic
-│   │   ├── 📜 subtitle_gen.py      #  Faster-Whisper transcription service
-│   │   ├── 📜 video_engine.py      #  Custom FFmpeg rendering pipeline (libx264)
-│   │   └── 📜 voice_gen.py         #  ElevenLabs TTS generation wrapper
+│   │   ├──  ai_agent.py          #  Core Gemini 3.0 Pro reasoning engine
+│   │   ├──  sfx_gen.py           #  Sound Effect generation logic
+│   │   ├──  subtitle_gen.py      #  Faster-Whisper transcription service
+│   │   ├──  video_engine.py      #  Custom FFmpeg rendering pipeline (libx264)
+│   │   └──  voice_gen.py         #  ElevenLabs TTS generation wrapper
 │   ├── 📂 temp_storage/            #  Temp folder for uploads & processed videos
-│   ├── 📜 .env                     #  Backend API keys (Gemini, ElevenLabs)
-│   ├── 📜 list_models.py           #  Utility script to check available Gemini models
-│   ├── 📜 main.py                  #  Server Entry Point (FastAPI + WebSockets)
-│   └── 📜 requirements.txt         #  Python dependency list
+│   ├──  .env                     #  Backend API keys (Gemini, ElevenLabs)
+│   ├──  list_models.py           #  Utility script to check available Gemini models
+│   ├──  main.py                  #  Server Entry Point (FastAPI + WebSockets)
+│   └──  requirements.txt         #  Python dependency list
 │
 └── 📂 frontend/                    #  Next.js 14 Frontend
     ├── 📂 .next/                   #  Next.js build output (auto-generated)
     ├── 📂 node_modules/            #  Node.js dependencies (React, Tailwind, etc.)
     ├── 📂 public/                  #  Static assets (images, icons)
     ├── 📂 app/                     #  App Router (Main Application Code)
-    │   ├── 📜 favicon.ico          #  Browser tab icon
-    │   ├── 📜 globals.css          #  Global styles & Tailwind directives
-    │   ├── 📜 layout.tsx           #  Root layout (fonts, metadata)
-    │   └── 📜 page.tsx             #  Main Editor Dashboard Page
+    │   ├──  favicon.ico          #  Browser tab icon
+    │   ├──  globals.css          #  Global styles & Tailwind directives
+    │   ├──  layout.tsx           #  Root layout (fonts, metadata)
+    │   └──  page.tsx             #  Main Editor Dashboard Page
     ├── 📂 components/              #  UI Components
     │   ├── 📂 editor/              #  Video Editor Specific Components
-    │   │   ├── 📜 AIGenPanel.tsx         #  UI for generating Assets (SFX/Subs)
-    │   │   ├── 📜 Player.tsx             #  HTML5 Video Player Controller
-    │   │   ├── 📜 ReasoningPanel.tsx     #  Real-time "AI Brain" Console (WebSockets)
-    │   │   ├── 📜 Sidebar.tsx            #  Left navigation bar
-    │   │   ├── 📜 Timeline.tsx           #  Magnetic Timeline visualization
-    │   │   ├── 📜 ToolsPanel.tsx         #  Tool selector (Cut, Select, AI)
-    │   │   └── 📜 TopBar.tsx             #  Header & Export controls
-    │   └── 📜 components.json      #  Shadcn UI component configuration
+    │   │   ├──  AIGenPanel.tsx         #  UI for generating Assets (SFX/Subs)
+    │   │   ├──  Player.tsx             #  HTML5 Video Player Controller
+    │   │   ├──  ReasoningPanel.tsx     #  Real-time "AI Brain" Console (WebSockets)
+    │   │   ├──  Sidebar.tsx            #  Left navigation bar
+    │   │   ├──  Timeline.tsx           #  Magnetic Timeline visualization
+    │   │   ├──  ToolsPanel.tsx         #  Tool selector (Cut, Select, AI)
+    │   │   └──  TopBar.tsx             #  Header & Export controls
+    │   └──  components.json      #  Shadcn UI component configuration
     ├── 📂 lib/                     #  Utility functions (class merging, helpers)
-    ├── 📜 .gitignore               #  Git ignore rules
-    ├── 📜 components.json          #  UI library config
-    ├── 📜 eslint.config.mjs        #  Code linting configuration
-    ├── 📜 next-env.d.ts            #  TypeScript definitions for Next.js
-    ├── 📜 next.config.mjs          #  Next.js build configuration
-    ├── 📜 package-lock.json        #  Exact dependency versions
-    ├── 📜 package.json             #  Project scripts & dependencies
-    ├── 📜 postcss.config.mjs       #  CSS processing config
-    ├── 📜 tailwind.config.ts       #  Tailwind CSS theme configuration
-    └── 📜 tsconfig.json            #  TypeScript compiler options
+    ├──  .gitignore               #  Git ignore rules
+    ├──  components.json          #  UI library config
+    ├──  eslint.config.mjs        #  Code linting configuration
+    ├──  next-env.d.ts            #  TypeScript definitions for Next.js
+    ├──  next.config.mjs          #  Next.js build configuration
+    ├──  package-lock.json        #  Exact dependency versions
+    ├──  package.json             #  Project scripts & dependencies
+    ├──  postcss.config.mjs       #  CSS processing config
+    ├──  tailwind.config.ts       #  Tailwind CSS theme configuration
+    └──  tsconfig.json            #  TypeScript compiler options
 ```
 ---
 
@@ -420,7 +464,7 @@ ELEVENLABS_API_KEY=your_elevenlabs_key_here
 
 ### Wire Frontend to Localhost:
 
-By default, the frontend points to the live Google Cloud URL. To route it locally, search for https://voxedit-backend-577095710958.us-central1.run.app in the following files and replace it with http://localhost:8080 (and wss://... to ws://localhost:8080):
+By default, the frontend points to the live Google Cloud URL. To route it locally, search for https://voxedit-backend-577095710958.us-central1.run.app in the following files and replace it with http://localhost:8000 (and wss://... to ws://localhost:8000):
 
 frontend/components/editor/ToolsPanel.tsx
 
