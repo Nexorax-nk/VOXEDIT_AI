@@ -507,6 +507,4 @@ gcloud run deploy voxedit-backend \
 **Naveen Kumar**  
 *Student@CIT aspiring Full Stack & AI Engineer*
 
-Built for the **Google Gemini-Live Agent Challenge**.
-
 ---
